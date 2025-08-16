@@ -1,3 +1,4 @@
+//Users/aungphyolinn/Desktop/MCare/backend/src/api/qr.ts
 import { Router, Request, Response } from "express";
 import { generatePromptPayQR } from "../services/promptpayService";
 

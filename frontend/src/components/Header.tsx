@@ -1,12 +1,11 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // Text Logo Component
 const MCareTextLogo: React.FC = () => (
-  <span className="text-black text-3xl md:text-5xl font-extrabold p-1">
+  <span className="text-gray-900 text-3xl md:text-5xl font-extrabold p-1">
     M-Care
   </span>
 );
@@ -21,11 +20,11 @@ interface FlagProps {
 const Flag: React.FC<FlagProps> = ({ src, alt, isSelected }) => (
   <div
     className={`w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center p-[2px] transition-all duration-200 ${
-      isSelected ? "bg-yellow-400" : "bg-gray-400"
+      isSelected ? "bg-rose-400" : "bg-gray-400"
     }`}
   >
     <img
-      src={src}
+      src={src || "/placeholder.svg"}
       alt={alt}
       className="w-full h-full rounded-full object-cover border-2 border-white"
     />
@@ -40,7 +39,7 @@ const HamburgerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     viewBox="0 0 24 24"
     strokeWidth={2}
     stroke="currentColor"
-    className="w-8 h-8 text-[#5c4c47]"
+    className="w-8 h-8 text-gray-700"
     {...props}
   >
     <path
@@ -59,7 +58,7 @@ const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     viewBox="0 0 24 24"
     strokeWidth={2}
     stroke="currentColor"
-    className="w-8 h-8 text-[#5c4c47]"
+    className="w-8 h-8 text-gray-700"
     {...props}
   >
     <path
@@ -85,18 +84,18 @@ const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
   const navLinks = [
     { href: "/", label: "HomePage" },
     { href: "/services", label: "Services" },
-    { href: "/faq", label: "FAQ" },
+    { href: "/book", label: "FAQ" },
   ];
 
   return (
-    <header className="relative z-50 bg-[#fef9f7] shadow-md py-2">
+    <header className="relative z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm py-2">
       <div className="flex items-center justify-between w-full px-4 md:px-8 lg:px-16">
         {/* Logo */}
         <Link
           href="/"
           className="flex items-center space-x-2 group rounded-md p-1 -m-1"
         >
-          <MCareTextLogo style={{ color: "#332522" }} />
+          <MCareTextLogo />
         </Link>
 
         {/* Desktop Nav + Language */}
@@ -106,13 +105,18 @@ const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
               <Link
                 key={href}
                 href={href}
-                className={`font-extrabold transition-colors duration-300 px-4 py-2 rounded-lg cursor-pointer ${
+                className={`font-semibold transition-colors duration-300 px-4 py-2 rounded-lg cursor-pointer relative group ${
                   isActive(href)
-                    ? "text-[#ffa092] border-b-2 border-[#ffa092]"
-                    : "text-[#5c4c47] hover:text-[#ffa092]"
+                    ? "text-rose-600"
+                    : "text-gray-700 hover:text-rose-600"
                 }`}
               >
                 {label}
+                <span
+                  className={`absolute -bottom-1 left-0 h-0.5 bg-rose-600 transition-all duration-200 ${
+                    isActive(href) ? "w-full" : "w-0 group-hover:w-full"
+                  }`}
+                ></span>
               </Link>
             ))}
           </nav>
@@ -122,7 +126,7 @@ const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
             <button
               onClick={() => setSelectedLanguage("th")}
               aria-label="Switch to Thai"
-              className="focus:outline-none rounded-full p-1"
+              className="focus:outline-none rounded-full p-1 hover:scale-110 transition-transform duration-200"
             >
               <Flag
                 src="https://flagcdn.com/th.svg"
@@ -130,13 +134,11 @@ const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
                 isSelected={selectedLanguage === "th"}
               />
             </button>
-
-            <span className="text-[#5c4c47] mx-1 select-none">|</span>
-
+            <span className="text-gray-400 mx-1 select-none">|</span>
             <button
               onClick={() => setSelectedLanguage("en")}
               aria-label="Switch to English"
-              className="focus:outline-none rounded-full p-1"
+              className="focus:outline-none rounded-full p-1 hover:scale-110 transition-transform duration-200"
             >
               <Flag
                 src="https://flagcdn.com/gb.svg"
@@ -147,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
 
             {/* Mobile Menu Toggle */}
             <button
-              className="md:hidden ml-4 p-2 focus:outline-none focus:ring-2 focus:ring-[#ffa092] rounded-md"
+              className="md:hidden ml-4 p-2 focus:outline-none focus:ring-2 focus:ring-rose-400 rounded-md hover:bg-gray-100 transition-colors duration-200"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle mobile menu"
             >
@@ -159,25 +161,24 @@ const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-[#fff6f1] z-50 flex flex-col items-center justify-center p-8 md:hidden">
+        <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-8 md:hidden">
           <button
-            className="absolute top-4 right-4 p-2 focus:outline-none focus:ring-2 focus:ring-[#ffa092] rounded-md"
+            className="absolute top-4 right-4 p-2 focus:outline-none focus:ring-2 focus:ring-rose-400 rounded-md hover:bg-gray-100 transition-colors duration-200"
             onClick={closeMobileMenu}
             aria-label="Close mobile menu"
           >
             <CloseIcon />
           </button>
-
           <nav className="flex flex-col items-center space-y-6 w-full max-w-xs">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
-                className={`font-extrabold transition-colors duration-300 px-6 py-3 rounded-lg w-full text-center cursor-pointer ${
+                className={`font-semibold transition-colors duration-300 px-6 py-3 rounded-lg w-full text-center cursor-pointer ${
                   isActive(href)
-                    ? "bg-[#ffa092] text-white shadow-md"
-                    : "text-[#5c4c47] hover:bg-[#ffb3aa]"
-                } focus:outline-none focus:ring-2 focus:ring-[#ffa092]`}
+                    ? "bg-rose-600 text-white shadow-md"
+                    : "text-gray-700 hover:bg-rose-50 hover:text-rose-600"
+                } focus:outline-none focus:ring-2 focus:ring-rose-400`}
                 onClick={closeMobileMenu}
               >
                 {label}

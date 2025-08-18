@@ -18,6 +18,7 @@ export interface PaymentVerification {
   status: "pending" | "verified" | "failed";
   verifiedAt?: Date | null;
   notes?: string;
+  decodedString?: string | null; // ✅ added field
 }
 
 export interface AppointmentDocument extends Document {
@@ -75,6 +76,7 @@ const AppointmentSchema = new Schema<AppointmentDocument>(
       },
       verifiedAt: { type: Date, default: null },
       notes: { type: String },
+      decodedString: { type: String, default: null }, // ✅ new optional field
     },
   },
   { timestamps: true }

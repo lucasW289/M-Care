@@ -138,6 +138,7 @@ export default function BookingPage() {
                 verificationStatus={verificationStatus}
                 setVerificationStatus={setVerificationStatus}
                 onBack={handleBack}
+                getTotalAmount={getTotalAmount}
               />
             )}
           </div>

@@ -5,19 +5,19 @@ import Appointment from "../models/Appointment";
 const router = Router();
 
 // POST /appointments
-// POST /appointments
 router.post("/", async (req, res) => {
   try {
     const {
       bookingId,
       refNumber,
-      timeSlot, // Changed from selectedSlot to timeSlot to match frontend and model
+      timeSlot, // frontend + model naming
       selectedServices,
       userDetails,
       amount,
+      paymentVerification, // ✅ allow frontend to send decodedString or notes if needed
     } = req.body;
 
-    // Strict validation - using timeSlot
+    // ===== Validation =====
     if (
       !bookingId ||
       !timeSlot?.date ||
@@ -33,25 +33,48 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Map services and cast serviceId to ObjectId
+    // ===== Check if booking already exists =====
+    const existing = await Appointment.findOne({ bookingId });
+
+    if (existing) {
+      if (existing.paymentVerification.status !== "verified") {
+        // Already exists but not verified -> just return existing
+        return res.status(200).json({
+          message: "Appointment already exists and is pending verification",
+          appointment: existing,
+        });
+      } else {
+        // Verified already -> block re-creation
+        return res.status(409).json({
+          message: "Appointment already verified and cannot be changed",
+        });
+      }
+    }
+
+    // ===== Map services and cast serviceId to ObjectId =====
     const services = selectedServices.map((s: any) => ({
-      // Cast the string ID to a Mongoose ObjectId
       serviceId: new mongoose.Types.ObjectId(s.serviceId),
       name: s.name,
       price: s.price,
-      // The quantity property is not in the frontend data, but is in the model.
-      // This correctly handles the case where it's not provided.
       quantity: s.quantity || 1,
     }));
 
+    // ===== Prepare paymentVerification object =====
+    const paymentVerificationData = {
+      status: "pending",
+      notes: paymentVerification?.notes || undefined,
+      decodedString: paymentVerification?.decodedString || null, // ✅ include decodedString if provided
+    };
+
+    // ===== Create new appointment =====
     const newAppointment = new Appointment({
       bookingId,
       refNumber: refNumber || null,
-      timeSlot, // Using the correctly named variable
+      timeSlot,
       selectedServices: services,
       amount,
       userDetails,
-      paymentVerification: { status: "pending" },
+      paymentVerification: paymentVerificationData,
     });
 
     await newAppointment.save();
@@ -62,14 +85,6 @@ router.post("/", async (req, res) => {
     });
   } catch (error: any) {
     console.error("Appointment creation error:", error);
-
-    // Handle duplicate bookingId gracefully
-    if (error.code === 11000 && error.keyPattern?.bookingId) {
-      return res
-        .status(409)
-        .json({ message: "Booking ID already exists, try again." });
-    }
-
     res.status(500).json({ message: "Server error" });
   }
 });

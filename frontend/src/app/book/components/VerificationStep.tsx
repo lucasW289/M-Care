@@ -39,6 +39,7 @@ interface VerificationStepProps {
   setVerificationStatus: (
     status: "pending" | "success" | "failed" | null
   ) => void;
+  getTotalAmount: () => number;
   onBack: () => void;
 }
 
@@ -50,6 +51,7 @@ export default function VerificationStep({
   setPaymentSlip,
   verificationStatus,
   setVerificationStatus,
+  getTotalAmount,
   onBack,
 }: VerificationStepProps) {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +65,8 @@ export default function VerificationStep({
     if (!paymentSlip) return;
 
     setVerificationStatus("pending");
-
+    const totalAmount = getTotalAmount();
+    console.log("I am here" + totalAmount);
     try {
       // Convert image to ImageData
       const img = await createImageBitmap(paymentSlip);
@@ -85,6 +88,7 @@ export default function VerificationStep({
       }
 
       const qrData = code.data;
+      console.log(bookingId + " and " + qrData + "and" + userDetails);
       console.log("Extracted QR data:", qrData);
 
       // Send QR data to backend for verification
@@ -92,9 +96,9 @@ export default function VerificationStep({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          bookingId,
-          qrData,
-          userDetails,
+          bookingID: bookingId, // match backend
+          refNbr: qrData, // match backend
+          amount: totalAmount, // match backend
         }),
       });
 
@@ -249,17 +253,25 @@ export default function VerificationStep({
             Payment Verification Failed
           </h3>
           <p className="text-red-700 text-base sm:text-lg mb-6 sm:mb-8 px-2 sm:px-0">
-            We couldn't verify your payment. Please contact customer support for
-            assistance.
+            We couldn't verify your payment. It may either be invalid or used
+            slip to our service.
           </p>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
-            <Button className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent mb-4 sm:mb-0 flex items-center justify-center">
+            <Button
+              className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent mb-4 sm:mb-0 flex items-center justify-center"
+              onClick={() => {
+                setPaymentSlip(null);
+                setVerificationStatus(null);
+              }}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Try Again
+            </Button>
+
+            <Button className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent flex items-center justify-center">
               <Phone className="w-4 h-4 mr-2" />
               Call Support
-            </Button>
-            <Button className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent flex items-center justify-center">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Live Chat
             </Button>
           </div>
         </Card>

@@ -10,6 +10,7 @@ import { startSlipVerifiedConsumer } from "./services/kafkaConsumer";
 import { connectDB } from "./config/mongo";
 import servicesRouter from "./api/services";
 import appointmentsRoute from "./api/appointments";
+import appointmentAvailabilityRoutes from "./api/availability"; // <-- your file path
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/qr", qrRouter);
 app.use("/verify-slip", verificationRouter);
 app.use("/services", servicesRouter);
 app.use("/appointments", appointmentsRoute);
+app.use("/availability", appointmentAvailabilityRoutes);
 
 // Connect to MongoDB, then start server and Kafka services
 (async () => {

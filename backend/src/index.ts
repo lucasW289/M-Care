@@ -5,12 +5,11 @@ import dotenv from "dotenv";
 dotenv.config();
 import qrRouter from "./api/qr";
 import verificationRouter from "./api/verification";
-import { sendVerifySlip } from "./services/kafkaProducer";
-import { startSlipVerifiedConsumer } from "./services/kafkaConsumer";
 import { connectDB } from "./config/mongo";
 import servicesRouter from "./api/services";
 import appointmentsRoute from "./api/appointments";
 import appointmentAvailabilityRoutes from "./api/availability"; // <-- your file path
+import sendConfirmationEmailRoute from "./api/sendConfirmationEmail"; // 👈 your route file
 
 const app = express();
 
@@ -32,19 +31,12 @@ app.use("/verify-slip", verificationRouter);
 app.use("/services", servicesRouter);
 app.use("/appointments", appointmentsRoute);
 app.use("/availability", appointmentAvailabilityRoutes);
+app.use("/send-confirmation-email", sendConfirmationEmailRoute);
 
 // Connect to MongoDB, then start server and Kafka services
 (async () => {
   try {
     await connectDB();
-
-    // Start Kafka consumer
-    //  await startSlipVerifiedConsumer();
-    //   console.log("✅ Kafka consumer started");
-
-    // Optional: send a test message on startup
-    //   await sendVerifySlip("Backend startup test message");
-    //   console.log("✅ Test message sent to Kafka topic 'verify-slip'");
 
     const PORT = process.env.PORT || 3007;
     app.listen(PORT, () => {

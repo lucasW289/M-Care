@@ -8,15 +8,15 @@ import verificationRouter from "./api/verification";
 import { connectDB } from "./config/mongo";
 import servicesRouter from "./api/services";
 import appointmentsRoute from "./api/appointments";
-import appointmentAvailabilityRoutes from "./api/availability"; // <-- your file path
-import sendConfirmationEmailRoute from "./api/sendConfirmationEmail"; // 👈 your route file
+import appointmentAvailabilityRoutes from "./api/availability";
+//import sendConfirmationEmailRoute from "./api/sendConfirmationEmail";
 
 const app = express();
 
 // Enable CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // frontend base origin
+    origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
@@ -28,10 +28,12 @@ app.use(express.json());
 // Routes
 app.use("/qr", qrRouter);
 app.use("/verify-slip", verificationRouter);
+// app.use("/verification", verificationRouter); <-- REMOVE THIS LINE
+
 app.use("/services", servicesRouter);
 app.use("/appointments", appointmentsRoute);
 app.use("/availability", appointmentAvailabilityRoutes);
-app.use("/send-confirmation-email", sendConfirmationEmailRoute);
+//app.use("/send-confirmation-email", sendConfirmationEmailRoute);
 
 // Connect to MongoDB, then start server and Kafka services
 (async () => {

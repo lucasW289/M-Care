@@ -1,4 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
+// /Users/aungphyolinn/Desktop/MCare/frontend/src/app/book/components/VerificationStep.tsx
 "use client";
 
 import type React from "react";
@@ -12,7 +13,6 @@ import {
   AlertCircle,
   CheckCircle,
   Phone,
-  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -35,9 +35,9 @@ interface VerificationStepProps {
   selectedSlot: SelectedSlot | null;
   paymentSlip: File | null;
   setPaymentSlip: (file: File | null) => void;
-  verificationStatus: "pending" | "success" | "failed" | null;
+  verificationStatus: "pending" | "verified" | "failed" | null;
   setVerificationStatus: (
-    status: "pending" | "success" | "failed" | null
+    status: "pending" | "verified" | "failed" | null
   ) => void;
   getTotalAmount: () => number;
   onBack: () => void;
@@ -56,9 +56,7 @@ export default function VerificationStep({
 }: VerificationStepProps) {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      setPaymentSlip(file);
-    }
+    if (file) setPaymentSlip(file);
   };
 
   const handleVerifyPayment = async () => {
@@ -66,7 +64,7 @@ export default function VerificationStep({
 
     setVerificationStatus("pending");
     const totalAmount = getTotalAmount();
-    console.log("I am here" + totalAmount);
+
     try {
       // Convert image to ImageData
       const img = await createImageBitmap(paymentSlip);
@@ -76,7 +74,6 @@ export default function VerificationStep({
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("Canvas context not available");
       ctx.drawImage(img, 0, 0);
-
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
       // Decode QR
@@ -86,39 +83,63 @@ export default function VerificationStep({
         alert("No QR code found in the image");
         return;
       }
-
       const qrData = code.data;
-      console.log(bookingId + " and " + qrData + "and" + userDetails);
-      console.log("Extracted QR data:", qrData);
 
-      // Send QR data to backend for verification
+      // Enqueue verification job
       const res = await fetch("http://localhost:3007/verify-slip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          bookingID: bookingId, // match backend
-          refNbr: qrData, // match backend
-          amount: totalAmount, // match backend
+          bookingID: bookingId,
+          refNbr: qrData,
+          amount: totalAmount,
         }),
       });
-
       const result = await res.json();
-      setVerificationStatus(result.status); // expected: 'success' or 'failed'
-    } catch (error) {
-      console.error("Verification error:", error);
+
+      if (result.status !== "queued") {
+        setVerificationStatus(result.status);
+        return;
+      }
+
+      // Polling
+      const pollInterval = 2000; // 2s
+      const maxAttempts = 30; // total ~1 min
+      let attempts = 0;
+
+      const poll = async () => {
+        attempts++;
+        const statusRes = await fetch(
+          `http://localhost:3007/verify-slip/status/${bookingId}`
+        );
+        const statusData = await statusRes.json();
+
+        if (
+          statusData.status === "verified" ||
+          statusData.status === "failed"
+        ) {
+          setVerificationStatus(statusData.status);
+        } else if (attempts < maxAttempts) {
+          setTimeout(poll, pollInterval);
+        } else {
+          setVerificationStatus("failed"); // timeout
+        }
+      };
+
+      poll();
+    } catch (err) {
+      console.error("Verification error:", err);
       setVerificationStatus("failed");
     }
   };
 
-  const formatFullDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+  const formatFullDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-US", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -131,6 +152,7 @@ export default function VerificationStep({
         </p>
       </div>
 
+      {/* Upload Step */}
       {verificationStatus === null && (
         <Card className="bg-white border-2 border-gray-100 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
@@ -153,7 +175,6 @@ export default function VerificationStep({
               <label
                 htmlFor="payment-slip"
                 className="cursor-pointer select-none"
-                aria-label="Upload payment slip file"
               >
                 <div className="text-center">
                   <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
@@ -190,6 +211,7 @@ export default function VerificationStep({
         </Card>
       )}
 
+      {/* Pending */}
       {verificationStatus === "pending" && (
         <Card className="bg-white border-2 border-gray-100 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 animate-pulse">
@@ -204,7 +226,8 @@ export default function VerificationStep({
         </Card>
       )}
 
-      {verificationStatus === "success" && (
+      {/* Success */}
+      {verificationStatus === "verified" && (
         <Card className="bg-white border-2 border-green-200 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
             <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
@@ -226,7 +249,6 @@ export default function VerificationStep({
                 {bookingId}
               </div>
             </div>
-
             {selectedSlot && (
               <div className="bg-green-50 p-4 sm:p-6 rounded-2xl border border-green-200">
                 <div className="text-sm sm:text-base text-green-800 mb-1 sm:mb-2">
@@ -244,6 +266,7 @@ export default function VerificationStep({
         </Card>
       )}
 
+      {/* Failed */}
       {verificationStatus === "failed" && (
         <Card className="bg-white border-2 border-red-200 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
           <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
@@ -253,8 +276,8 @@ export default function VerificationStep({
             Payment Verification Failed
           </h3>
           <p className="text-red-700 text-base sm:text-lg mb-6 sm:mb-8 px-2 sm:px-0">
-            We couldn't verify your payment. It may either be invalid or used
-            slip to our service.
+            We couldn't verify your payment. It may either be invalid or already
+            used.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
@@ -268,7 +291,6 @@ export default function VerificationStep({
               <Upload className="w-4 h-4 mr-2" />
               Try Again
             </Button>
-
             <Button className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent flex items-center justify-center">
               <Phone className="w-4 h-4 mr-2" />
               Call Support
@@ -277,7 +299,7 @@ export default function VerificationStep({
         </Card>
       )}
 
-      {verificationStatus !== "success" && verificationStatus !== null && (
+      {verificationStatus !== "verified" && verificationStatus !== null && (
         <div className="flex justify-center pt-8 sm:pt-12">
           <Button
             onClick={onBack}

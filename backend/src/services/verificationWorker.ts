@@ -6,6 +6,7 @@ import axios from "axios";
 import Appointment from "../models/Appointment";
 
 const QUEUE_NAME = "verificationQueue";
+const EMAIL_QUEUE_NAME = "PaymentVerified"; // Added for clarity
 
 const normalizeName = (name: string): string =>
   name
@@ -23,6 +24,7 @@ async function startWorker() {
     );
     const channel = await conn.createChannel();
     await channel.assertQueue(QUEUE_NAME, { durable: true });
+    await channel.assertQueue(EMAIL_QUEUE_NAME, { durable: true }); // Assert email queue exists
 
     console.log("✅ Verification Worker running...");
 
@@ -100,6 +102,15 @@ async function startWorker() {
             await appointment.save();
 
             console.log("✅ Appointment verified:", bookingID);
+
+            // Publish a new message to the email queue
+            channel!.sendToQueue(
+              EMAIL_QUEUE_NAME,
+              Buffer.from(JSON.stringify({ bookingID })),
+              { persistent: true }
+            );
+            console.log("📨 Email confirmation job queued for:", bookingID);
+
             channel!.ack(msg); // Acknowledge successful processing
           } else {
             console.error(

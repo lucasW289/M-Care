@@ -71,9 +71,9 @@ export default function ServiceSelectionStep({
   );
 
   return (
-    <div className="grid lg:grid-cols-3 gap-8">
-      {/* Left Column: Services List */}
-      <div className="lg:col-span-2 space-y-8">
+    <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 lg:gap-8">
+      {/* Services List */}
+      <div className="lg:col-span-2 order-1">
         <ServicesList
           services={filteredServices}
           selectedServices={selectedServices}
@@ -83,15 +83,15 @@ export default function ServiceSelectionStep({
         />
       </div>
 
-      {/* Right Column: User Form + Selected Services */}
-      <div className="lg:col-span-1 space-y-6">
-        {/* User Details Form - Now at the top */}
+      {/* User Details + Selected Services */}
+      <div className="lg:col-span-1 flex flex-col gap-6 order-2 mt-6 lg:mt-0">
+        {/* User Details Form */}
         <UserDetailsForm
           userDetails={userDetails}
           onUserDetailsChange={handleUserDetailsChange}
         />
 
-        {/* Selected Services Sidebar - Now below the form */}
+        {/* Selected Services Sidebar */}
         <SelectedServicesSidebar
           selectedServices={selectedServices}
           onUpdateQuantity={updateQuantity}

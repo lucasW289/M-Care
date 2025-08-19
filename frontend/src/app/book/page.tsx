@@ -56,7 +56,7 @@ export default function BookingPage() {
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null);
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
   const [verificationStatus, setVerificationStatus] = useState<
-    "pending" | "success" | "failed" | null
+    "pending" | "verified" | "failed" | null
   >(null);
   const [bookingId] = useState(() => `BK${Date.now().toString().slice(-6)}`);
 

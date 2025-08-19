@@ -1,9 +1,10 @@
 /* eslint-disable react/no-unescaped-entities */
-// /Users/aungphyolinn/Desktop/MCare/frontend/src/app/book/components/VerificationStep.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import type React from "react";
 import jsQR from "jsqr";
+import Image from "next/image";
 
 import {
   ArrowLeft,
@@ -66,7 +67,6 @@ export default function VerificationStep({
     const totalAmount = getTotalAmount();
 
     try {
-      // Convert image to ImageData
       const img = await createImageBitmap(paymentSlip);
       const canvas = document.createElement("canvas");
       canvas.width = img.width;
@@ -76,7 +76,6 @@ export default function VerificationStep({
       ctx.drawImage(img, 0, 0);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-      // Decode QR
       const code = jsQR(imageData.data, imageData.width, imageData.height);
       if (!code) {
         setVerificationStatus("failed");
@@ -85,7 +84,6 @@ export default function VerificationStep({
       }
       const qrData = code.data;
 
-      // Enqueue verification job
       const res = await fetch("http://localhost:3007/verify-slip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -102,9 +100,8 @@ export default function VerificationStep({
         return;
       }
 
-      // Polling
-      const pollInterval = 2000; // 2s
-      const maxAttempts = 30; // total ~1 min
+      const pollInterval = 2000;
+      const maxAttempts = 30;
       let attempts = 0;
 
       const poll = async () => {
@@ -122,7 +119,7 @@ export default function VerificationStep({
         } else if (attempts < maxAttempts) {
           setTimeout(poll, pollInterval);
         } else {
-          setVerificationStatus("failed"); // timeout
+          setVerificationStatus("failed");
         }
       };
 
@@ -142,29 +139,29 @@ export default function VerificationStep({
     });
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-8 sm:mb-12">
-        <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-4 sm:mb-6 leading-tight">
+    <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-6 sm:mb-10">
+        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-3 sm:mb-5 leading-tight">
           Upload Payment Slip
         </h2>
-        <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto px-2 sm:px-0">
+        <p className="text-sm sm:text-base text-gray-600 max-w-xl mx-auto px-1 sm:px-0">
           Please upload your payment slip for verification
         </p>
       </div>
 
       {/* Upload Step */}
       {verificationStatus === null && (
-        <Card className="bg-white border-2 border-gray-100 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
-            <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
+        <Card className="bg-white border-2 border-gray-100 rounded-2xl p-4 sm:p-6 shadow-lg text-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">
             Upload Payment Slip
           </h3>
 
-          <div className="max-w-md mx-auto">
-            <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 sm:p-8 hover:border-rose-400 transition-colors">
+          <div className="max-w-full mx-auto">
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 sm:p-6 hover:border-rose-400 transition-colors">
               <input
                 type="file"
                 accept="image/*"
@@ -177,7 +174,7 @@ export default function VerificationStep({
                 className="cursor-pointer select-none"
               >
                 <div className="text-center">
-                  <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
+                  <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-gray-400 mx-auto mb-2 sm:mb-3" />
                   <p className="text-gray-600 mb-1 sm:mb-2 text-sm sm:text-base">
                     Click to upload payment slip
                   </p>
@@ -189,12 +186,10 @@ export default function VerificationStep({
             </div>
 
             {paymentSlip && (
-              <div className="mt-5 sm:mt-6 p-3 sm:p-4 bg-green-50 rounded-xl border border-green-200">
+              <div className="mt-4 sm:mt-5 p-2 sm:p-3 bg-green-50 rounded-lg border border-green-200">
                 <div className="flex items-center gap-2 text-green-800 text-sm sm:text-base">
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="truncate">
-                    File uploaded: {paymentSlip.name}
-                  </span>
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="truncate">{paymentSlip.name}</span>
                 </div>
               </div>
             )}
@@ -202,10 +197,10 @@ export default function VerificationStep({
             <Button
               onClick={handleVerifyPayment}
               disabled={!paymentSlip}
-              className="w-full mt-6 sm:mt-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 sm:py-4 text-base sm:text-lg font-semibold rounded-xl disabled:opacity-50"
+              className="w-full mt-4 sm:mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-2.5 sm:py-3 text-sm sm:text-base font-semibold rounded-lg disabled:opacity-50 flex items-center justify-center"
             >
               Verify Payment
-              <CheckCircle className="w-5 h-5 ml-2" />
+              <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
             </Button>
           </div>
         </Card>
@@ -213,11 +208,11 @@ export default function VerificationStep({
 
       {/* Pending */}
       {verificationStatus === "pending" && (
-        <Card className="bg-white border-2 border-gray-100 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 animate-pulse">
-            <Clock className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-600" />
+        <Card className="bg-white border-2 border-gray-100 rounded-2xl p-4 sm:p-6 shadow-lg text-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 animate-pulse">
+            <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-600" />
           </div>
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">
             Verifying Payment...
           </h3>
           <p className="text-gray-600 text-sm sm:text-base">
@@ -226,38 +221,38 @@ export default function VerificationStep({
         </Card>
       )}
 
-      {/* Success */}
+      {/* Verified */}
       {verificationStatus === "verified" && (
-        <Card className="bg-white border-2 border-green-200 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
-            <CheckCircle2 className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" />
+        <Card className="bg-white border-2 border-green-200 rounded-2xl p-4 sm:p-6 shadow-lg text-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <CheckCircle2 className="w-6 h-6 sm:w-8 sm:h-8 text-green-600" />
           </div>
-          <h3 className="text-2xl sm:text-3xl font-bold text-green-900 mb-4 sm:mb-6">
+          <h3 className="text-xl sm:text-2xl font-bold text-green-900 mb-3 sm:mb-4">
             Booking Confirmed Successfully!
           </h3>
-          <p className="text-green-700 text-base sm:text-lg mb-6 sm:mb-8 px-2 sm:px-0">
-            Your appointment has been confirmed. We've sent a confirmation email
-            to {userDetails.email}
+          <p className="text-green-700 text-sm sm:text-base mb-4 sm:mb-5 px-1 sm:px-0">
+            Your appointment has been confirmed. Confirmation sent to{" "}
+            {userDetails.email}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <div className="bg-green-50 p-4 sm:p-6 rounded-2xl border border-green-200">
-              <div className="text-sm sm:text-base text-green-800 mb-1 sm:mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-5">
+            <div className="bg-green-50 p-3 sm:p-4 rounded-xl border border-green-200">
+              <div className="text-xs sm:text-sm text-green-800 mb-1">
                 Booking Reference
               </div>
-              <div className="text-xl sm:text-2xl font-black text-green-900 truncate">
+              <div className="text-lg sm:text-xl font-black text-green-900 truncate">
                 {bookingId}
               </div>
             </div>
             {selectedSlot && (
-              <div className="bg-green-50 p-4 sm:p-6 rounded-2xl border border-green-200">
-                <div className="text-sm sm:text-base text-green-800 mb-1 sm:mb-2">
+              <div className="bg-green-50 p-3 sm:p-4 rounded-xl border border-green-200">
+                <div className="text-xs sm:text-sm text-green-800 mb-1">
                   Appointment
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-green-900">
+                <div className="text-base sm:text-lg font-bold text-green-900">
                   {formatFullDate(selectedSlot.date)}
                 </div>
-                <div className="text-lg sm:text-xl font-bold text-green-900">
+                <div className="text-base sm:text-lg font-bold text-green-900">
                   {selectedSlot.time}
                 </div>
               </div>
@@ -268,21 +263,21 @@ export default function VerificationStep({
 
       {/* Failed */}
       {verificationStatus === "failed" && (
-        <Card className="bg-white border-2 border-red-200 rounded-3xl p-8 sm:p-12 shadow-2xl text-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8">
-            <AlertCircle className="w-8 h-8 sm:w-10 sm:h-10 text-red-600" />
+        <Card className="bg-white border-2 border-red-200 rounded-2xl p-4 sm:p-6 shadow-lg text-center">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+            <AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" />
           </div>
-          <h3 className="text-2xl sm:text-3xl font-bold text-red-900 mb-4 sm:mb-6">
+          <h3 className="text-xl sm:text-2xl font-bold text-red-900 mb-3 sm:mb-4">
             Payment Verification Failed
           </h3>
-          <p className="text-red-700 text-base sm:text-lg mb-6 sm:mb-8 px-2 sm:px-0">
+          <p className="text-red-700 text-sm sm:text-base mb-4 sm:mb-5 px-1 sm:px-0">
             We couldn't verify your payment. It may either be invalid or already
             used.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xs mx-auto">
             <Button
-              className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent mb-4 sm:mb-0 flex items-center justify-center"
+              className="border-2 border-red-300 text-red-700 hover:bg-red-50 bg-transparent mb-2 sm:mb-0 flex items-center justify-center"
               onClick={() => {
                 setPaymentSlip(null);
                 setVerificationStatus(null);
@@ -300,12 +295,12 @@ export default function VerificationStep({
       )}
 
       {verificationStatus !== "verified" && verificationStatus !== null && (
-        <div className="flex justify-center pt-8 sm:pt-12">
+        <div className="flex justify-center pt-6 sm:pt-8">
           <Button
             onClick={onBack}
-            className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-6 sm:px-8 py-3 rounded-xl bg-transparent flex items-center justify-center max-w-xs mx-auto"
+            className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-transparent flex items-center justify-center max-w-xs mx-auto text-sm sm:text-base"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Back to Payment
           </Button>
         </div>

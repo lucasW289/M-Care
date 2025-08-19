@@ -7,7 +7,7 @@ import { ArrowRight, ArrowLeft, CreditCard, QrCode, Copy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import QRCodeSVG from "./QRCodeSVG";
-
+import Image from "next/image";
 interface SelectedSlot {
   date: string;
   time: string;
@@ -115,23 +115,23 @@ export default function PaymentStep({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
         {/* Payment Summary */}
-        <Card className="bg-white border-2 border-gray-100 rounded-3xl p-6 sm:p-8 shadow-2xl max-w-full w-full">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-rose-500 to-purple-500 rounded-2xl flex items-center justify-center">
-              <CreditCard className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+        <Card className="bg-white border-2 border-gray-100 rounded-3xl p-4 sm:p-6 shadow-2xl max-w-full w-full max-h-[500px] sm:max-h-[600px] overflow-y-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-rose-500 to-purple-500 rounded-2xl flex items-center justify-center">
+              <CreditCard className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
               Payment Summary
             </h3>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-gray-50 p-4 sm:p-6 rounded-2xl">
-              <div className="text-sm sm:text-base text-gray-600 mb-2">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-gray-50 p-3 sm:p-4 rounded-2xl">
+              <div className="text-xs sm:text-sm text-gray-600 mb-1">
                 Booking ID
               </div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-gray-900 break-all">
+                <span className="font-bold text-gray-900 break-all text-sm sm:text-base">
                   {bookingId}
                 </span>
                 <button
@@ -139,14 +139,14 @@ export default function PaymentStep({
                   className="p-1 hover:bg-gray-200 rounded"
                   aria-label="Copy Booking ID"
                 >
-                  <Copy className="w-4 h-4 text-gray-500" />
+                  <Copy className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
                 </button>
               </div>
             </div>
 
             {selectedSlot && (
-              <div className="bg-indigo-50 p-4 sm:p-6 rounded-2xl border border-indigo-200">
-                <div className="text-sm sm:text-base text-indigo-600 font-medium mb-2">
+              <div className="bg-indigo-50 p-3 sm:p-4 rounded-2xl border border-indigo-200">
+                <div className="text-xs sm:text-sm text-indigo-600 font-medium mb-1">
                   Appointment Details
                 </div>
                 <div className="text-lg sm:text-xl font-bold text-indigo-900">
@@ -158,33 +158,33 @@ export default function PaymentStep({
               </div>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {selectedServices.map((service, index) => (
                 <div
                   key={index}
-                  className="flex justify-between items-center py-2"
+                  className="flex justify-between items-center py-1 sm:py-2"
                 >
                   <div>
-                    <div className="font-semibold text-gray-900 text-sm sm:text-base">
+                    <div className="font-semibold text-gray-900 text-xs sm:text-sm">
                       {service.title}
                     </div>
-                    <div className="text-xs sm:text-sm text-gray-600">
+                    <div className="text-[9px] sm:text-xs text-gray-600">
                       Qty: {service.quantity}
                     </div>
                   </div>
-                  <div className="font-bold text-gray-900 text-sm sm:text-base">
+                  <div className="font-bold text-gray-900 text-xs sm:text-sm">
                     ₿{(service.price * service.quantity).toLocaleString()}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="border-t pt-4">
+            <div className="border-t pt-2 sm:pt-4">
               <div className="flex justify-between items-center">
-                <span className="text-xl sm:text-2xl font-bold text-gray-900">
+                <span className="text-lg sm:text-xl font-bold text-gray-900">
                   Total:
                 </span>
-                <span className="text-2xl sm:text-3xl font-black text-rose-600">
+                <span className="text-xl sm:text-2xl font-black text-rose-600">
                   ₿{totalAmount.toLocaleString()}
                 </span>
               </div>
@@ -194,14 +194,24 @@ export default function PaymentStep({
 
         {/* QR Code */}
         <Card className="bg-white border-2 border-gray-100 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-w-full w-full">
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             <div>
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-rose-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-rose-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
                 <QrCode className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600" />
               </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
                 Scan to Pay
               </h3>
+              {/* PromptPay logo */}
+              <div className="flex justify-center mb-4 sm:mb-6">
+                <Image
+                  src="/ThaiQRPayment.svg"
+                  alt="PromptPay"
+                  width={140} // corresponds to w-20
+                  height={80} // maintain aspect ratio
+                  className="w-20 sm:w-28 md:w-32 h-auto"
+                />
+              </div>
             </div>
 
             <div className="flex justify-center">

@@ -1,19 +1,11 @@
 "use client";
-import {
-  ArrowRight,
-  CheckCircle,
-  Heart,
-  Lock,
-  Users,
-  Shield,
-  Award,
-  Phone,
-} from "lucide-react";
+import { ArrowRight, CheckCircle, Heart, Phone } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useServices } from "@/context/ServicesContext"; // adjust path
+import { useServices } from "@/context/ServicesContext";
+import Link from "next/link";
 
 export default function ServicesPage() {
   const { services, loading, error } = useServices();
@@ -26,54 +18,62 @@ export default function ServicesPage() {
       <Header />
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-20 lg:py-32 overflow-hidden">
+        <section className="relative bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50 py-16 sm:py-20 lg:py-32 overflow-hidden">
           <div className="absolute inset-0">
-            <div className="absolute top-20 left-20 w-72 h-72 bg-rose-200/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl"></div>
+            <div className="absolute top-20 left-10 sm:left-20 w-52 sm:w-72 h-52 sm:h-72 bg-rose-200/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-10 sm:right-20 w-72 sm:w-96 h-72 sm:h-96 bg-purple-200/20 rounded-full blur-3xl"></div>
           </div>
-          <div className="relative max-w-7xl mx-auto px-4 text-center space-y-8">
-            <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-6 py-3 rounded-full text-sm font-semibold">
-              <Heart className="w-4 h-4" /> Comprehensive Sexual Health Services
+          <div className="relative max-w-7xl mx-auto px-4 text-center space-y-6 sm:space-y-8">
+            <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold">
+              <Heart className="w-3 h-3 sm:w-4 sm:h-4" /> Comprehensive Sexual
+              Health Services
             </div>
-            <h1 className="text-4xl lg:text-7xl font-black text-gray-900 leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black text-gray-900 leading-snug sm:leading-tight">
               Professional{" "}
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-purple-600">
                 Sexual Health
               </span>
               <span className="block">Care</span>
             </h1>
-            <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
               Confidential, expert sexual health services in a safe and
               judgment-free environment. From HIV prevention to reproductive
               health, we provide comprehensive care tailored to your needs.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="bg-rose-600 hover:bg-rose-700 text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
-                Book Consultation
-                <ArrowRight className="w-5 h-5 ml-2" />
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Button className="bg-rose-600 hover:bg-rose-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto">
+                <Link href="/book" className="flex items-center justify-center">
+                  Book A Service
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
+                </Link>
               </Button>
-              <Button className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-8 py-4 text-lg font-semibold rounded-2xl">
-                Call Now: +66 2 123 4567
-                <Phone className="w-5 h-5 ml-2" />
+              <Button className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-lg font-semibold rounded-2xl w-full sm:w-auto">
+                <a
+                  href="tel:+66851021039"
+                  className="flex items-center justify-center"
+                >
+                  Call Now: +66 85-102-1039
+                  <Phone className="w-4 h-4 sm:w-5 sm:h-5 ml-1 sm:ml-2" />
+                </a>
               </Button>
             </div>
           </div>
         </section>
 
         {/* All Services */}
-        <section className="py-20 bg-white">
+        <section className="py-16 sm:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-black text-gray-900 mb-6">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 mb-4 sm:mb-6">
                 All Services
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
                 Complete list of our sexual health services with transparent
                 pricing
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {services.map((service, index) => {
                 const colors = [
                   {
@@ -118,34 +118,34 @@ export default function ServicesPage() {
                 return (
                   <Card
                     key={index}
-                    className={`bg-white border-2 ${color.border} rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer transform hover:-translate-y-2`}
+                    className={`bg-white border-2 ${color.border} rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group cursor-pointer transform hover:-translate-y-1 sm:hover:-translate-y-2`}
                   >
-                    <div className={`${color.bg} h-2`}></div>
-                    <div className="p-6 sm:p-8">
-                      <div className="flex items-start justify-between mb-6">
+                    <div className={`${color.bg} h-1 sm:h-2`}></div>
+                    <div className="p-4 sm:p-6">
+                      <div className="flex items-start justify-between mb-4 sm:mb-6">
                         <div
-                          className={`w-12 h-12 sm:w-14 sm:h-14 ${color.accent} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                          className={`w-10 h-10 sm:w-12 sm:h-12 ${color.accent} rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300`}
                         >
                           <CheckCircle
-                            className={`w-6 h-6 sm:w-7 sm:h-7 ${color.text}`}
+                            className={`w-5 h-5 sm:w-6 sm:h-6 ${color.text}`}
                           />
                         </div>
                         {service.isPopular && (
-                          <div className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold">
+                          <div className="bg-yellow-100 text-yellow-700 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
                             Popular
                           </div>
                         )}
                       </div>
 
-                      <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 group-hover:text-gray-700 transition-colors">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-4 group-hover:text-gray-700 transition-colors">
                         {service.title}
                       </h3>
-                      <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6">
+                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-4 sm:mb-6">
                         {service.description}
                       </p>
 
                       {service.features && (
-                        <ul className="space-y-2 mb-6">
+                        <ul className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
                           {service.features.map((feature, idx) => (
                             <li
                               key={idx}
@@ -160,27 +160,32 @@ export default function ServicesPage() {
                         </ul>
                       )}
 
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-100 gap-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 sm:pt-6 border-t border-gray-100 gap-3 sm:gap-4">
                         <div>
-                          <div className="text-sm text-gray-500 font-medium">
+                          <div className="text-xs sm:text-sm text-gray-500 font-medium">
                             {service.price > 0 ? "Starting from" : "Cost"}
                           </div>
-                          <div className="text-2xl sm:text-3xl font-black text-gray-900">
+                          <div className="text-xl sm:text-2xl font-black text-gray-900">
                             {service.price > 0
                               ? `₿${service.price.toLocaleString()}`
                               : "Free"}
                           </div>
                           {service.duration && (
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs sm:text-sm text-gray-500 mt-1">
                               Duration: {service.duration}
                             </div>
                           )}
                         </div>
                         <Button
-                          className={`${color.bg} hover:opacity-90 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto`}
+                          className={`${color.bg} hover:opacity-90 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto`}
                         >
-                          Book Now
-                          <ArrowRight className="w-4 h-4 ml-2" />
+                          <Link
+                            href="/book"
+                            className="flex items-center justify-center"
+                          >
+                            Book Now
+                          </Link>
+                          <ArrowRight className="w-4 h-4 ml-1 sm:ml-2" />
                         </Button>
                       </div>
                     </div>
@@ -191,8 +196,6 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* Why Choose Us Section */}
-        {/* ... keep same */}
         <Footer />
       </div>
     </>

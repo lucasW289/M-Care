@@ -1,193 +1,173 @@
 "use client";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-// Text Logo Component
+import { Button } from "@/components/ui/Button";
+// MCareTextLogo
 const MCareTextLogo: React.FC = () => (
-  <span className="text-gray-900 text-3xl md:text-5xl font-extrabold p-1">
-    M-Care
-  </span>
+  <Link href="/" className="flex items-center space-x-3 group">
+    {/* Custom 'M+' Icon */}
+    <div className="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+      <svg
+        className="w-7 h-7 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="2.5"
+        stroke="currentColor"
+      >
+        {/* The 'M' shape */}
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4 20V8L12 16L20 8V20"
+        />
+        {/* The '+' shape */}
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 4V10M9 7H15"
+        />
+      </svg>
+    </div>
+    <span className="text-foreground text-3xl font-bold tracking-tight group-hover:text-primary transition-colors duration-200">
+      M-Care
+    </span>
+  </Link>
 );
 
-// Flag Props
-interface FlagProps {
-  src: string;
-  alt: string;
-  isSelected: boolean;
-}
-
-const Flag: React.FC<FlagProps> = ({ src, alt, isSelected }) => (
-  <div
-    className={`w-8 h-8 md:w-11 md:h-11 rounded-full flex items-center justify-center p-[2px] transition-all duration-200 ${
-      isSelected ? "bg-rose-400" : "bg-gray-400"
-    }`}
-  >
-    <img
-      src={src || "/placeholder.svg"}
-      alt={alt}
-      className="w-full h-full rounded-full object-cover border-2 border-white"
+const MenuIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
+  <div className="w-6 h-6 flex flex-col justify-center items-center">
+    <span
+      className={`bg-foreground block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
+        isOpen ? "rotate-45 translate-y-1" : "-translate-y-0.5"
+      }`}
+    />
+    <span
+      className={`bg-foreground block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5 ${
+        isOpen ? "opacity-0" : "opacity-100"
+      }`}
+    />
+    <span
+      className={`bg-foreground block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm ${
+        isOpen ? "-rotate-45 -translate-y-1" : "translate-y-0.5"
+      }`}
     />
   </div>
 );
 
-// Hamburger Icon
-const HamburgerIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className="w-8 h-8 text-gray-700"
-    {...props}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-    />
-  </svg>
-);
-
-// Close Icon
-const CloseIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    fill="none"
-    viewBox="0 0 24 24"
-    strokeWidth={2}
-    stroke="currentColor"
-    className="w-8 h-8 text-gray-700"
-    {...props}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M6 18L18 6M6 6l12 12"
-    />
-  </svg>
-);
-
-interface HeaderProps {
-  bgColor?: string;
-}
-
-const Header: React.FC<HeaderProps> = ({ bgColor = "" }) => {
+const Header: React.FC = () => {
   const pathname = usePathname();
-  const [selectedLanguage, setSelectedLanguage] = useState<"en" | "th">("en");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => pathname === path;
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   const navLinks = [
-    { href: "/", label: "HomePage" },
+    { href: "/", label: "Home" },
     { href: "/services", label: "Services" },
-    { href: "/book", label: "FAQ" },
+    { href: "/faq", label: "FAQ" },
   ];
 
   return (
-    <header className="relative z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm py-2">
-      <div className="flex items-center justify-between w-full px-4 md:px-8 lg:px-16">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center space-x-2 group rounded-md p-1 -m-1"
-        >
-          <MCareTextLogo />
-        </Link>
+    <>
+      <header className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 ">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* CHANGED: Increased header height from h-16 to h-20 */}
+          <div className="flex h-20 items-center justify-between">
+            {/* Logo */}
+            <MCareTextLogo />
 
-        {/* Desktop Nav + Language */}
-        <div className="flex items-center space-x-8">
-          <nav className="hidden md:flex items-center space-x-8">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`font-semibold transition-colors duration-300 px-4 py-2 rounded-lg cursor-pointer relative group ${
-                  isActive(href)
-                    ? "text-rose-600"
-                    : "text-gray-700 hover:text-rose-600"
-                }`}
-              >
-                {label}
-                <span
-                  className={`absolute -bottom-1 left-0 h-0.5 bg-rose-600 transition-all duration-200 ${
-                    isActive(href) ? "w-full" : "w-0 group-hover:w-full"
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-10">
+              {navLinks.map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  /* CHANGED: Increased font size, padding, and tweaked active/hover styles */
+                  className={`text-base font-medium transition-all duration-200 relative group px-3 py-2 rounded-lg ${
+                    isActive(href)
+                      ? "text-primary bg-primary/10 font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
                   }`}
-                ></span>
-              </Link>
-            ))}
-          </nav>
+                >
+                  {label}
+                  <span
+                    className={`absolute -bottom-2 left-1/2 -translate-x-1/2 h-0.5 transition-all duration-300 ${
+                      isActive(href)
+                        ? "w-4/5 bg-rose-500"
+                        : "w-0 group-hover:w-full bg-primary"
+                    }`}
+                  />
+                </Link>
+              ))}
+            </nav>
 
-          {/* Language Switcher + Mobile Menu Toggle */}
-          <div className="flex items-center space-x-2">
+            {/* Mobile Menu Button */}
             <button
-              onClick={() => setSelectedLanguage("th")}
-              aria-label="Switch to Thai"
-              className="focus:outline-none rounded-full p-1 hover:scale-110 transition-transform duration-200"
-            >
-              <Flag
-                src="https://flagcdn.com/th.svg"
-                alt="Thai Flag"
-                isSelected={selectedLanguage === "th"}
-              />
-            </button>
-            <span className="text-gray-400 mx-1 select-none">|</span>
-            <button
-              onClick={() => setSelectedLanguage("en")}
-              aria-label="Switch to English"
-              className="focus:outline-none rounded-full p-1 hover:scale-110 transition-transform duration-200"
-            >
-              <Flag
-                src="https://flagcdn.com/gb.svg"
-                alt="UK Flag"
-                isSelected={selectedLanguage === "en"}
-              />
-            </button>
-
-            {/* Mobile Menu Toggle */}
-            <button
-              className="md:hidden ml-4 p-2 focus:outline-none focus:ring-2 focus:ring-rose-400 rounded-md hover:bg-gray-100 transition-colors duration-200"
+              className="md:hidden h-10 w-10 rounded-lg hover:bg-muted/20 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-ring"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle mobile menu"
+              aria-label="Toggle menu"
             >
-              <HamburgerIcon />
+              <MenuIcon isOpen={isMobileMenuOpen} />
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu (No changes here) */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-8 md:hidden">
-          <button
-            className="absolute top-4 right-4 p-2 focus:outline-none focus:ring-2 focus:ring-rose-400 rounded-md hover:bg-gray-100 transition-colors duration-200"
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-background/95 backdrop-blur-md"
             onClick={closeMobileMenu}
-            aria-label="Close mobile menu"
-          >
-            <CloseIcon />
-          </button>
-          <nav className="flex flex-col items-center space-y-6 w-full max-w-xs">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`font-semibold transition-colors duration-300 px-6 py-3 rounded-lg w-full text-center cursor-pointer ${
-                  isActive(href)
-                    ? "bg-rose-600 text-white shadow-md"
-                    : "text-gray-700 hover:bg-rose-50 hover:text-rose-600"
-                } focus:outline-none focus:ring-2 focus:ring-rose-400`}
+          />
+
+          {/* Menu content */}
+          <div className="relative bg-background h-full w-full flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6">
+              <MCareTextLogo />
+              <button
+                className="h-10 w-10 rounded-lg hover:bg-muted/20 transition-all duration-200 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-ring"
                 onClick={closeMobileMenu}
+                aria-label="Close menu"
               >
-                {label}
-              </Link>
-            ))}
-          </nav>
+                <MenuIcon isOpen={true} />
+              </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex flex-col p-6 space-y-2 flex-1">
+              {navLinks.map(({ href, label }, index) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`text-base font-medium transition-all duration-200 px-4 py-3 rounded-lg transform ${
+                    isActive(href)
+                      ? "bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-lg animate-fade-in-up"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                  } ${
+                    isMobileMenuOpen
+                      ? "translate-x-0 opacity-100"
+                      : "translate-x-4 opacity-0"
+                  }`}
+                  style={{
+                    transitionDelay: isMobileMenuOpen
+                      ? `${index * 50}ms`
+                      : "0ms",
+                  }}
+                  onClick={closeMobileMenu}
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
         </div>
       )}
-    </header>
+    </>
   );
 };
 

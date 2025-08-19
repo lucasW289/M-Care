@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -40,7 +41,6 @@ export default function TimeSlotSelectionStep({
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch time slots from backend
   const fetchTimeSlots = async (date: string) => {
     try {
       setLoading(true);
@@ -49,16 +49,15 @@ export default function TimeSlotSelectionStep({
       );
       if (!res.ok) throw new Error("Failed to fetch slots");
       const data = await res.json();
-      setTimeSlots(data.availability || []); // Correct field name from backend
+      setTimeSlots(data.availability || []);
     } catch (err) {
-      console.error("Error fetching time slots:", err);
+      console.error(err);
       setTimeSlots([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Generate next 14 days
   const generateAvailableDates = () => {
     const dates = [];
     const today = new Date();
@@ -80,7 +79,6 @@ export default function TimeSlotSelectionStep({
 
   const availableDates = generateAvailableDates();
 
-  // Automatically fetch today’s slots on mount
   useEffect(() => {
     if (availableDates.length > 0) {
       const today = availableDates[0].value;
@@ -89,14 +87,12 @@ export default function TimeSlotSelectionStep({
     }
   }, []);
 
-  // Handle date selection
   const handleDateSelect = (date: string) => {
     setSelectedDate(date);
-    setSelectedSlot(null); // Reset previous selection
+    setSelectedSlot(null);
     fetchTimeSlots(date);
   };
 
-  // Handle time selection
   const handleTimeSlotSelect = (time: string) => {
     if (selectedDate) {
       setSelectedSlot({ date: selectedDate, time });
@@ -104,10 +100,10 @@ export default function TimeSlotSelectionStep({
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-2 sm:px-4">
       {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-1">
+      <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-1">
           Select Date & Time
         </h2>
         <p className="text-sm text-gray-600">
@@ -115,21 +111,23 @@ export default function TimeSlotSelectionStep({
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Left side: Date + Time selection */}
-        <div className="lg:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+        {/* Left side */}
+        <div className="lg:col-span-2 space-y-3">
           {/* Date Selection */}
-          <Card className="p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <Card className="p-3 sm:p-4">
+            <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-4 h-4 text-rose-600" />
-              <h3 className="font-semibold text-gray-900">Select Date</h3>
+              <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
+                Select Date
+              </h3>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {availableDates.map((date) => (
                 <button
                   key={date.value}
                   onClick={() => handleDateSelect(date.value)}
-                  className={`p-2 rounded-lg border text-sm font-medium transition-colors ${
+                  className={`p-2 rounded-lg border text-xs sm:text-sm font-medium transition-colors ${
                     selectedDate === date.value
                       ? "border-rose-500 bg-rose-50 text-rose-700"
                       : "border-gray-200 hover:border-rose-300 hover:bg-rose-50 text-gray-700"
@@ -137,7 +135,7 @@ export default function TimeSlotSelectionStep({
                 >
                   <div>{date.label}</div>
                   {date.isToday && (
-                    <div className="text-xs text-rose-600">Today</div>
+                    <div className="text-[10px] text-rose-600">Today</div>
                   )}
                 </button>
               ))}
@@ -145,52 +143,59 @@ export default function TimeSlotSelectionStep({
           </Card>
 
           {/* Time Selection */}
-          <Card className="p-4">
-            <div className="flex items-center gap-2 mb-3">
-              <Clock className="w-4 h-4 text-rose-600" />
-              <h3 className="font-semibold text-gray-900">Select Time</h3>
-              {!selectedDate && (
-                <span className="text-xs text-gray-500">
-                  (Select a date first)
-                </span>
+          <Card className="p-3 sm:p-2 h-[30px]">
+            <div className="flex flex-col gap-3">
+              {/* Header */}
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-rose-600" />
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base">
+                  Select Time
+                </h3>
+                {!selectedDate && (
+                  <span className="text-xs text-gray-500">
+                    (Select a date first)
+                  </span>
+                )}
+              </div>
+
+              {/* Slots */}
+              {loading ? (
+                <p className="text-base text-gray-500">Loading slots...</p>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-5">
+                  {timeSlots.length === 0 && selectedDate && (
+                    <p className="col-span-full text-sm text-gray-500">
+                      No slots available for this date.
+                    </p>
+                  )}
+                  {timeSlots.map((slot, index) => {
+                    const isSelected =
+                      selectedSlot?.time === slot.time &&
+                      selectedSlot?.date === selectedDate;
+                    const isDisabled = !slot.available;
+
+                    return (
+                      <button
+                        key={index}
+                        onClick={() =>
+                          slot.available && handleTimeSlotSelect(slot.time)
+                        }
+                        disabled={isDisabled}
+                        className={`p-1 rounded-lg border text-xs sm:text-sm font-medium transition-colors ${
+                          isDisabled
+                            ? "border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed"
+                            : isSelected
+                            ? "border-rose-500 bg-rose-500 text-white"
+                            : "border-gray-200 hover:border-rose-300 hover:bg-rose-50 text-gray-700"
+                        }`}
+                      >
+                        {slot.time}
+                      </button>
+                    );
+                  })}
+                </div>
               )}
             </div>
-            {loading ? (
-              <p className="text-sm text-gray-500">Loading slots...</p>
-            ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                {timeSlots.length === 0 && selectedDate && (
-                  <p className="col-span-full text-sm text-gray-500">
-                    No slots available for this date.
-                  </p>
-                )}
-                {timeSlots.map((slot, index) => {
-                  const isSelected =
-                    selectedSlot?.time === slot.time &&
-                    selectedSlot?.date === selectedDate;
-                  const isDisabled = !slot.available;
-
-                  return (
-                    <button
-                      key={index}
-                      onClick={() =>
-                        slot.available && handleTimeSlotSelect(slot.time)
-                      }
-                      disabled={isDisabled}
-                      className={`p-2 rounded-lg border text-sm font-medium transition-colors ${
-                        isDisabled
-                          ? "border-gray-100 bg-gray-50 text-gray-400 cursor-not-allowed"
-                          : isSelected
-                          ? "border-rose-500 bg-rose-500 text-white"
-                          : "border-gray-200 hover:border-rose-300 hover:bg-rose-50 text-gray-700"
-                      }`}
-                    >
-                      {slot.time}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
           </Card>
         </div>
 
@@ -208,10 +213,13 @@ export default function TimeSlotSelectionStep({
       </div>
 
       {/* Back Button */}
-      <div className="flex justify-center pt-6">
-        <Button onClick={onBack} className="px-6 bg-transparent">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Details
+      <div className="flex justify-center pt-8 sm:pt-12">
+        <Button
+          onClick={onBack}
+          className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-xl bg-transparent flex items-center justify-center"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Time Selection
         </Button>
       </div>
     </div>

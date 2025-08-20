@@ -37,13 +37,13 @@ export default function UserDetailsForm({
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 rounded-2xl p-4 sm:p-6 shadow-lg">
+    <Card className="bg-white dark:bg-white border-2 border-gray-100 dark:border-gray-100 rounded-2xl p-4 sm:p-6 shadow-lg">
       {/* Header */}
       <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
         <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-pink-400 to-red-500 rounded-xl flex items-center justify-center">
           <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </div>
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-900">
           Your Information
         </h3>
       </div>
@@ -53,7 +53,7 @@ export default function UserDetailsForm({
         {(["name", "passportNumber", "phoneNumber", "email"] as const).map(
           (field) => (
             <div key={field}>
-              <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-700 mb-1">
                 {field === "name"
                   ? "Full Name *"
                   : field === "passportNumber"
@@ -76,6 +76,11 @@ export default function UserDetailsForm({
                   validateField(field, e.target.value);
                 }}
                 onBlur={(e) => validateField(field, e.target.value)}
+                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-xl text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:border-transparent ${
+                  errors[field]
+                    ? "border-red-400 dark:border-red-400 focus:ring-red-400 dark:focus:ring-red-400"
+                    : "border-gray-200 dark:border-gray-200 focus:ring-pink-400 dark:focus:ring-pink-400"
+                } bg-white dark:bg-white text-gray-900 dark:text-gray-900`}
                 placeholder={
                   field === "name"
                     ? "Enter your full name"
@@ -85,19 +90,11 @@ export default function UserDetailsForm({
                     ? "Enter phone number"
                     : "Enter email address"
                 }
-                className={`w-full px-3 sm:px-4 py-2 sm:py-3 border rounded-xl text-sm sm:text-base shadow-sm
-                  focus:outline-none focus:ring-2 focus:border-transparent
-                  ${
-                    errors[field]
-                      ? "border-red-400 focus:ring-red-400"
-                      : "border-gray-200 focus:ring-pink-400 dark:border-gray-600 dark:focus:ring-pink-400"
-                  }
-                  bg-white text-gray-900 placeholder-gray-400
-                  dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400
-                `}
               />
               {errors[field] && (
-                <p className="text-red-500 text-xs mt-1">{errors[field]}</p>
+                <p className="text-red-500 dark:text-red-500 text-xs mt-1">
+                  {errors[field]}
+                </p>
               )}
             </div>
           )
@@ -105,9 +102,9 @@ export default function UserDetailsForm({
       </div>
 
       {/* Info Box */}
-      <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-pink-50 dark:bg-pink-900/20 rounded-xl border border-pink-200 dark:border-pink-700">
-        <div className="flex items-center gap-1 text-xs sm:text-sm text-pink-800 dark:text-pink-200">
-          <Shield className="w-3 h-3 text-pink-600 dark:text-pink-300" />
+      <div className="mt-3 sm:mt-4 p-2 sm:p-3 bg-pink-50 dark:bg-pink-50 rounded-xl border border-pink-200 dark:border-pink-200">
+        <div className="flex items-center gap-1 text-xs sm:text-sm text-pink-800 dark:text-pink-800">
+          <Shield className="w-3 h-3 text-pink-600 dark:text-pink-600" />
           <span>
             We'll send your booking confirmation to this email address
           </span>

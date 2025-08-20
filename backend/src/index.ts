@@ -20,7 +20,9 @@ const app = express();
 // Enable CORS
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000", // now dynamic
+    //origin: process.env.FRONTEND_URL || "http://localhost:3000", // now dynamic
+    origin: "http://localhost:3000", // now dynamic
+
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })

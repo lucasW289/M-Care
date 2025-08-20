@@ -211,7 +211,7 @@ export default function VerificationStep({
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-slate-900 via-pink-800 to-indigo-900 bg-clip-text text-transparent dark:text-slate-100 mb-2 sm:mb-4 leading-tight tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-slate-900 via-pink-800 to-indigo-900 bg-clip-text text-transparent  mb-2 sm:mb-4 leading-tight tracking-tight">
             Payment Verification
           </h1>
         </div>

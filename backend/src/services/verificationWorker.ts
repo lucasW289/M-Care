@@ -39,7 +39,7 @@ async function startWorker() {
           if (!token || !expectedReceiverName) {
             throw new Error("Missing env vars");
           }
-
+          console.log("I am here");
           // Prevent duplicate refNbr
           const existingAppointment = await Appointment.findOne({
             "paymentVerification.decodedString": refNbr,

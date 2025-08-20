@@ -3,9 +3,7 @@
 "use client";
 
 import React from "react";
-
 import jsQR from "jsqr";
-
 import {
   ArrowLeft,
   Upload,
@@ -24,7 +22,6 @@ import {
   Lock,
   Award,
   Verified,
-  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -214,7 +211,7 @@ export default function VerificationStep({
             </div>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-slate-900 via-pink-800 to-indigo-900 dark:from-slate-100 dark:via-pink-200 dark:to-indigo-100 bg-clip-text text-transparent mb-2 sm:mb-4 leading-tight tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-slate-900 via-pink-800 to-indigo-900 bg-clip-text text-transparent dark:text-slate-100 mb-2 sm:mb-4 leading-tight tracking-tight">
             Payment Verification
           </h1>
         </div>
@@ -335,7 +332,7 @@ export default function VerificationStep({
 
         {verificationStatus === "pending" && (
           <Card className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-900/20 dark:via-orange-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-amber-100/50 via-orange-100/50 to-yellow-100/50 dark:from-amber-800/20 dark:via-orange-800/20 dark:to-yellow-800/20 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-100/50 via-orange-100/50 to-yellow-100/50 dark:from-amber-800/20 dark:to-orange-800/20 animate-pulse"></div>
             <div
               className="absolute inset-0 bg-gradient-to-br from-amber-400/10 to-orange-500/10 animate-pulse"
               style={{ animationDelay: "1s" }}
@@ -421,7 +418,7 @@ export default function VerificationStep({
                 </div>
               </div>
 
-              <h2 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-emerald-800 via-green-700 to-teal-800 dark:from-emerald-100 dark:via-green-100 dark:to-teal-100 bg-clip-text text-transparent mb-2 sm:mb-4 tracking-tight">
+              <h2 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-emerald-800 via-green-700 to-teal-800 bg-clip-text text-transparent dark:text-emerald-100 mb-2 sm:mb-4 tracking-tight">
                 Booking Confirmed!
               </h2>
               <p className="text-sm sm:text-lg text-emerald-700 dark:text-emerald-300 mb-4 sm:mb-6 leading-relaxed max-w-xl mx-auto font-medium">

@@ -48,6 +48,7 @@ export default function TimeSlotSelectionStep({
       );
       if (!res.ok) throw new Error("Failed to fetch slots");
       const data = await res.json();
+      console.log(data);
       setTimeSlots(data.availability || []);
     } catch (err) {
       console.error(err);
@@ -99,23 +100,36 @@ export default function TimeSlotSelectionStep({
   };
 
   const isPastSlot = (time: string, date: string) => {
+    const today = new Date();
     const [year, month, day] = date.split("-").map(Number);
 
-    // Convert 12-hour format to 24-hour
-    const [timePart, modifier] = time.split(" ");
-    const [hoursStr, minutesStr] = timePart.split(":");
-    let hours = parseInt(hoursStr, 10);
-    const minutes = parseInt(minutesStr || "0", 10);
-
-    if (modifier?.toLowerCase() === "pm" && hours < 12) {
-      hours += 12;
-    }
-    if (modifier?.toLowerCase() === "am" && hours === 12) {
-      hours = 0;
+    // if date is in the future, no need to check
+    const slotDay = new Date(year, month - 1, day);
+    if (
+      slotDay > new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    ) {
+      return false;
     }
 
-    const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
-    return slotDate < new Date();
+    // only compare time if it's today
+    if (slotDay.toDateString() === today.toDateString()) {
+      const [timePart, modifier] = time.split(" ");
+      const [hoursStr, minutesStr] = timePart.split(":");
+      let hours = parseInt(hoursStr, 10);
+      const minutes = parseInt(minutesStr || "0", 10);
+
+      if (modifier?.toLowerCase() === "pm" && hours < 12) {
+        hours += 12;
+      }
+      if (modifier?.toLowerCase() === "am" && hours === 12) {
+        hours = 0;
+      }
+
+      const slotDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+      return slotDate < today;
+    }
+
+    return false;
   };
 
   return (

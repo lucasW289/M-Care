@@ -193,23 +193,22 @@ export default function PaymentStep({
         </Card>
 
         {/* QR Code */}
-        <Card className="bg-white border-2 border-gray-100 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-w-full w-full">
-          <div className="space-y-6 sm:space-y-8">
+        <Card className="bg-white border-2 border-gray-100 rounded-3xl p-4 sm:p-6 shadow-xl text-center max-w-full w-full">
+          <div className="space-y-4 sm:space-y-6">
             <div>
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-rose-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-lg">
-                <QrCode className="w-8 h-8 sm:w-10 sm:h-10 text-rose-600" />
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-rose-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 shadow-md">
+                <QrCode className="w-6 h-6 sm:w-8 sm:h-8 text-rose-600" />
               </div>
-              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                 Scan to Pay
               </h3>
-              {/* PromptPay logo */}
-              <div className="flex justify-center mb-4 sm:mb-6">
+              <div className="flex justify-center mb-3">
                 <Image
                   src="/ThaiQRPayment.svg"
                   alt="PromptPay"
-                  width={140} // corresponds to w-20
-                  height={80} // maintain aspect ratio
-                  className="w-20 sm:w-28 md:w-32 h-auto"
+                  width={120}
+                  height={60}
+                  className="w-20 sm:w-28 h-auto"
                 />
               </div>
             </div>
@@ -218,11 +217,11 @@ export default function PaymentStep({
               <QRCodeSVG amount={totalAmount} reference={bookingId} />
             </div>
 
-            <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 sm:p-6 rounded-2xl">
-              <div className="text-gray-600 mb-2 font-medium text-sm sm:text-base">
+            <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-3 sm:p-4 rounded-2xl">
+              <div className="text-gray-600 mb-1 font-medium text-sm">
                 Amount to Pay
               </div>
-              <div className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-purple-600">
+              <div className="text-2xl sm:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-600 to-purple-600">
                 ₿{totalAmount.toLocaleString()}
               </div>
             </div>
@@ -230,7 +229,7 @@ export default function PaymentStep({
             <Button
               onClick={handlePaymentConfirmation}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-4 text-lg font-semibold rounded-xl"
+              className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white py-3 text-base sm:text-lg font-semibold rounded-xl"
             >
               {loading ? "Saving..." : "I've Made the Payment Already"}
               {!loading && <ArrowRight className="w-5 h-5 ml-2" />}

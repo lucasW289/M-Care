@@ -2,6 +2,7 @@
 import React from "react";
 import { Phone, MapPin, Clock, ArrowRight, Mail } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -17,7 +18,7 @@ export default function Footer() {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           {/* Left Section */}
           <div className="space-y-6 sm:space-y-8">
             <h2 className="text-2xl sm:text-4xl lg:text-6xl font-black leading-tight">
@@ -54,10 +55,10 @@ export default function Footer() {
                   bg: "bg-pink-500/20",
                 },
                 {
-                  icon: <Mail className="w-6 h-6 text-blue-400" />,
+                  icon: <Mail className="w-6 h-6 text-pink-400" />,
                   label: "Email Us",
-                  value: "info@sexualhealth.clinic",
-                  bg: "bg-blue-500/20",
+                  value: "6531501204@lamduan.mfu.ac.th",
+                  bg: "bg-pink-500/20",
                 },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-4">
@@ -78,48 +79,41 @@ export default function Footer() {
               ))}
             </div>
 
-            <Button className="w-full sm:w-auto bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-              Schedule Confidential Appointment
-              <ArrowRight className="w-5 h-5 ml-2" />
+            <Button className="w-full sm:w-auto bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center">
+              <Link href="/book" className="flex items-center">
+                Schedule Confidential Appointment{" "}
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
             </Button>
           </div>
 
           {/* Right Section */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/20">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/20">
             <h3 className="text-xl sm:text-2xl font-bold mb-2">
               Find Our Clinic
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-6">
+            <p className="text-gray-300 text-sm sm:text-base mb-4 sm:mb-6">
               Conveniently located in central Bangkok with discrete parking and
               private entrances.
             </p>
 
-            {/* Map Placeholder */}
-            <div className="relative bg-gray-800 rounded-xl overflow-hidden h-56 sm:h-80 mb-6">
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
-                <div className="text-center space-y-2 sm:space-y-4">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-rose-500 rounded-full flex items-center justify-center mx-auto shadow-lg">
-                    <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
-                  </div>
-                  <div>
-                    <div className="text-white font-bold text-base sm:text-lg">
-                      Sexual Health Clinic
-                    </div>
-                    <div className="text-gray-300 text-xs sm:text-sm">
-                      123 Wellness Street
-                    </div>
-                    <div className="text-gray-300 text-xs sm:text-sm">
-                      Bangkok, Thailand
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Google Maps Embed */}
+            <div className="relative w-full h-56 sm:h-80 mb-6 rounded-xl overflow-hidden border border-white/20 shadow-lg">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d45459.89964980939!2d100.5229186611803!3d13.728391257120999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29f26ed4bb01b%3A0xac01b20801f96936!2sLumphini%20Park!5e0!3m2!1sen!2sth!4v1755680549020!5m2!1sen!2sth"
+                width="100%"
+                height="100%"
+                className="border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
 
             {/* Buttons */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Button
-                className="w-full border-white/20 text-white hover:bg-white/10 rounded-xl"
+                className="w-full border-white/20 text-white hover:bg-white/10 rounded-xl flex items-center justify-center"
                 onClick={() =>
                   window.open(
                     "https://maps.app.goo.gl/yr4ZUA6TBJDuKy3f7",
@@ -131,7 +125,7 @@ export default function Footer() {
                 Open in Maps
               </Button>
               <Button
-                className="w-full border-white/20 text-white hover:bg-white/10 rounded-xl"
+                className="w-full  border-white/20 text-white hover:bg-white/10 rounded-xl flex items-center justify-center"
                 onClick={() =>
                   window.open(
                     "https://maps.app.goo.gl/yr4ZUA6TBJDuKy3f7",

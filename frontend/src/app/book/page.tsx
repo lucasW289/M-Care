@@ -10,6 +10,7 @@ import TimeSlotSelectionStep from "./components/TimeSlotSelectionStep";
 import PaymentStep from "./components/PaymentStep";
 import VerificationStep from "./components/VerificationStep";
 import { useServices } from "@/context/ServicesContext"; // <- use the context hook
+import Footer from "@/components/Footer";
 
 const steps = [
   {

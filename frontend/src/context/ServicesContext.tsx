@@ -38,7 +38,7 @@ export const ServicesProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:3007/services"); // your backend endpoint
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/services`); // your backend endpoint
       if (!res.ok) throw new Error("Failed to fetch services");
       const data = await res.json();
       setServices(data);

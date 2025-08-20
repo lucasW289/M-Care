@@ -113,15 +113,18 @@ export default function VerificationStep({
       }
       const qrData = code.data;
 
-      const res = await fetch("http://localhost:3007/verify-slip", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          bookingID: bookingId,
-          refNbr: qrData,
-          amount: totalAmount,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/verify-slip`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            bookingID: bookingId,
+            refNbr: qrData,
+            amount: totalAmount,
+          }),
+        }
+      );
       const result = await res.json();
 
       if (result.status !== "queued") {
@@ -136,7 +139,7 @@ export default function VerificationStep({
       const poll = async () => {
         attempts++;
         const statusRes = await fetch(
-          `http://localhost:3007/verify-slip/status/${bookingId}`
+          `${process.env.NEXT_PUBLIC_API_URL}/verify-slip/status/${bookingId}`
         );
         const statusData = await statusRes.json();
 

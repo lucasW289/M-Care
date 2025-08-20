@@ -44,7 +44,7 @@ export default function TimeSlotSelectionStep({
     try {
       setLoading(true);
       const res = await fetch(
-        `http://localhost:3007/availability?date=${date}`
+        `${process.env.NEXT_PUBLIC_API_URL}/availability?date=${date}`
       );
       if (!res.ok) throw new Error("Failed to fetch slots");
       const data = await res.json();

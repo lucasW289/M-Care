@@ -17,7 +17,7 @@ export default function QRCodeSVG({ amount, reference }: QRCodeSVGProps) {
         setLoading(true);
         setError(null);
 
-        const res = await fetch("http://localhost:3007/qr", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/qr`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

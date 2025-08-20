@@ -4,7 +4,7 @@
 
 import React from "react";
 
-import jsQR from "jsQR";
+import jsQR from "jsqr";
 
 import {
   ArrowLeft,

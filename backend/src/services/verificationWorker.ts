@@ -1,10 +1,10 @@
 ///Users/aungphyolinn/Desktop/MCare/backend/src/services/verificationWorker.ts
-import "dotenv/config";
+import dotenv from "dotenv";
 import { connectDB } from "../config/mongo";
 import amqp from "amqplib";
 import axios from "axios";
 import Appointment from "../models/Appointment";
-
+dotenv.config();
 const QUEUE_NAME = "verificationQueue";
 const EMAIL_QUEUE_NAME = "PaymentVerified"; // Added for clarity
 
@@ -19,9 +19,7 @@ connectDB();
 
 async function startWorker() {
   try {
-    const conn = await amqp.connect(
-      process.env.RABBITMQ_URL || "amqp://localhost"
-    );
+    const conn = await amqp.connect(process.env.RABBITMQ_URL!);
     const channel = await conn.createChannel();
     await channel.assertQueue(QUEUE_NAME, { durable: true });
     await channel.assertQueue(EMAIL_QUEUE_NAME, { durable: true }); // Assert email queue exists

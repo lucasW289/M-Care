@@ -1,6 +1,7 @@
 // /Users/aungphyolinn/Desktop/MCare/backend/src/services/emailWorker.ts
 import amqp from "amqplib";
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 
 import Appointment from "../models/Appointment";
 import { sendEmail } from "./emailService";
@@ -8,7 +9,7 @@ import { connectDB } from "../config/mongo";
 connectDB();
 
 async function consumePaymentVerified() {
-  const connection = await amqp.connect("amqp://guest:guest@localhost:5672");
+  const connection = await amqp.connect(process.env.RABBITMQ_URL!); // <- use env
   const channel = await connection.createChannel();
   const queue = "PaymentVerified";
 

@@ -205,6 +205,7 @@ export default function PaymentStep({
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                 Scan to Pay
               </h3>
+
               <div className="flex justify-center mb-3">
                 <Image
                   src="/ThaiQRPayment.svg"

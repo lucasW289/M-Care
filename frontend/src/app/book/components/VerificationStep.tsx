@@ -3,9 +3,7 @@
 "use client";
 
 import React from "react";
-
 import jsQR from "jsqr";
-
 import {
   ArrowLeft,
   Upload,
@@ -24,7 +22,6 @@ import {
   Lock,
   Award,
   Verified,
-  TrendingUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -89,10 +86,10 @@ export default function VerificationStep({
 
   const handleVerifyPayment = async () => {
     if (!paymentSlip) return;
-
     setVerificationStatus("pending");
-    const totalAmount = getTotalAmount();
 
+    // Simulate the API call failure due to deployment environment
+    const totalAmount = getTotalAmount();
     try {
       const img = await createImageBitmap(paymentSlip);
       const canvas = document.createElement("canvas");
@@ -102,8 +99,8 @@ export default function VerificationStep({
       if (!ctx) throw new Error("Canvas context not available");
       ctx.drawImage(img, 0, 0);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
       const code = jsQR(imageData.data, imageData.width, imageData.height);
+
       if (!code) {
         setVerificationStatus("failed");
         setQrError(
@@ -111,57 +108,49 @@ export default function VerificationStep({
         );
         return;
       }
-      const qrData = code.data;
+    } catch (err) {
+      console.error("QR reading error:", err);
+      setVerificationStatus("failed");
+      setQrError(
+        "An unexpected error occurred while reading the QR code. Please try again."
+      );
+      return;
+    }
 
+    // This section simulates the failed API call
+    setTimeout(() => {
+      setVerificationStatus("failed");
+      setQrError(
+        "Verification failed: The OpenSlip Promptpay verification API used for this feature does not accept requests from a deployed source. As a result, this feature is not fully functional in this demo. Please pull from our GitHub and the verification service will be active."
+      );
+    }, 2000);
+  };
+
+  const handleDemoSuccess = async () => {
+    setVerificationStatus("verified");
+    try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/verify-slip`,
+        `${process.env.NEXT_PUBLIC_API_URL}/demo/demo-success`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            bookingID: bookingId,
-            refNbr: qrData,
-            amount: totalAmount,
-          }),
+          body: JSON.stringify({ bookingID: bookingId }),
         }
       );
+
       const result = await res.json();
-
-      if (result.status !== "queued") {
-        setVerificationStatus(result.status);
-        return;
-      }
-
-      const pollInterval = 2000;
-      const maxAttempts = 30;
-      let attempts = 0;
-
-      const poll = async () => {
-        attempts++;
-        const statusRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/verify-slip/status/${bookingId}`
+      if (result.status === "verified") {
+        setVerificationStatus("verified");
+      } else {
+        setVerificationStatus("failed");
+        setQrError(
+          "Failed to run demo successfully. Please check the backend."
         );
-        const statusData = await statusRes.json();
-
-        if (
-          statusData.status === "verified" ||
-          statusData.status === "failed"
-        ) {
-          setVerificationStatus(statusData.status);
-        } else if (attempts < maxAttempts) {
-          setTimeout(poll, pollInterval);
-        } else {
-          setVerificationStatus("failed");
-        }
-      };
-
-      poll();
-    } catch (err) {
-      console.error("Verification error:", err);
+      }
+    } catch (error) {
+      console.error("Demo API call failed:", error);
       setVerificationStatus("failed");
-      setQrError(
-        "An unexpected error occurred during verification. Please try again."
-      );
+      setQrError("An unexpected error occurred during the demo.");
     }
   };
 
@@ -186,7 +175,6 @@ export default function VerificationStep({
           style={{ animationDelay: "4s" }}
         ></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-br from-pink-500/5 to-indigo-600/5 rounded-full blur-2xl animate-pulse"></div>
-
         <div className="absolute top-10 left-10 w-1 h-1 bg-pink-400 rounded-full animate-ping opacity-60"></div>
         <div
           className="absolute top-20 right-20 w-1 h-1 bg-indigo-500 rounded-full animate-ping opacity-40"
@@ -197,7 +185,6 @@ export default function VerificationStep({
           style={{ animationDelay: "3s" }}
         ></div>
       </div>
-
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <div className="text-center mb-6 sm:mb-10">
           <div className="relative inline-flex items-center justify-center mb-4 sm:mb-6">
@@ -213,17 +200,14 @@ export default function VerificationStep({
               </div>
             </div>
           </div>
-
           <h1 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-slate-900 via-pink-800 to-indigo-900 bg-clip-text text-transparent mb-2 sm:mb-4 leading-tight tracking-tight">
             Payment Verification
           </h1>
         </div>
-
         {verificationStatus === null && (
           <Card className="bg-white/70 backdrop-blur-md border border-slate-200/50 rounded-xl p-4 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-500 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
             <div className="relative z-10">
               <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-105 transition-all duration-300 shadow-lg">
                 <div className="absolute inset-0 bg-gradient-to-br from-pink-600 to-indigo-600 rounded-lg opacity-0 group-hover:opacity-10 transition-all duration-300"></div>
@@ -234,16 +218,13 @@ export default function VerificationStep({
                   <Lock className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
               </div>
-
               <h2 className="text-xl sm:text-3xl font-black text-slate-900 mb-4 sm:mb-6 text-center tracking-tight">
                 Upload Payment Slip
               </h2>
-
               <div className="max-w-md mx-auto">
                 <div className="relative border-2 border-dashed border-slate-300 rounded-xl p-4 sm:p-8 hover:border-pink-400 hover:bg-pink-50/30 transition-all duration-300 group/upload cursor-pointer overflow-hidden backdrop-blur-sm">
                   <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 via-transparent to-indigo-500/5 opacity-0 group-hover/upload:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute inset-0 border-2 border-pink-400 rounded-xl opacity-0 group-hover/upload:opacity-30 transition-opacity duration-300 animate-pulse"></div>
-
                   <input
                     type="file"
                     accept="image/*"
@@ -260,10 +241,10 @@ export default function VerificationStep({
                         <Upload className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400 group-hover/upload:text-pink-500 group-hover/upload:scale-110 transition-all duration-300" />
                       </div>
                       <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2">
-                        Drop your payment slip here
+                        Click and upload slip here.
                       </h3>
                       <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-6 font-medium">
-                        or click to browse files
+                        Please use any photo for demo.
                       </p>
                       <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-slate-100 rounded-lg text-slate-600 font-semibold shadow-inner text-xs sm:text-sm">
                         <FileImage className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
@@ -272,7 +253,6 @@ export default function VerificationStep({
                     </div>
                   </label>
                 </div>
-
                 {paymentSlip && (
                   <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-200 shadow-lg animate-in slide-in-from-bottom-2 duration-500 relative overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-emerald-100/50 to-green-100/50 animate-pulse"></div>
@@ -297,7 +277,6 @@ export default function VerificationStep({
                     </div>
                   </div>
                 )}
-
                 {qrError && (
                   <div className="mt-4 sm:mt-6 p-3 sm:p-4 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl text-center shadow-md">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-md flex items-center justify-center mx-auto mb-2 sm:mb-3">
@@ -308,7 +287,6 @@ export default function VerificationStep({
                     </p>
                   </div>
                 )}
-
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-6 sm:mt-8">
                   <Button
                     onClick={onBack}
@@ -332,7 +310,6 @@ export default function VerificationStep({
             </div>
           </Card>
         )}
-
         {verificationStatus === "pending" && (
           <Card className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 border border-amber-200 rounded-xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-amber-100/50 via-orange-100/50 to-yellow-100/50 animate-pulse"></div>
@@ -340,7 +317,6 @@ export default function VerificationStep({
               className="absolute inset-0 bg-gradient-to-br from-amber-400/10 to-orange-500/10 animate-pulse"
               style={{ animationDelay: "1s" }}
             ></div>
-
             <div className="relative z-10">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-amber-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-xl">
                 <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center shadow-inner">
@@ -350,7 +326,6 @@ export default function VerificationStep({
                   <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
               </div>
-
               <h2 className="text-xl sm:text-3xl font-black text-amber-900 mb-2 sm:mb-4 tracking-tight">
                 Verification in Progress
               </h2>
@@ -358,7 +333,6 @@ export default function VerificationStep({
                 Please wait while we securely analyzing your payment slip. This
                 process typically completes within 30 seconds.
               </p>
-
               <div className="max-w-xs mx-auto">
                 <div className="h-1.5 sm:h-2 bg-amber-200 rounded-full overflow-hidden shadow-inner mb-1 sm:mb-2">
                   <div className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-500 rounded-full animate-pulse shadow-md"></div>
@@ -368,7 +342,6 @@ export default function VerificationStep({
                   <span>Validating...</span>
                 </div>
               </div>
-
               <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mt-6 sm:mt-8">
                 <div className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg border border-amber-200/50 shadow-md text-xs sm:text-sm">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-emerald-400 to-green-500 rounded-md flex items-center justify-center animate-pulse">
@@ -390,11 +363,9 @@ export default function VerificationStep({
             </div>
           </Card>
         )}
-
         {verificationStatus === "verified" && (
           <Card className="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 border border-emerald-200 rounded-xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-100/30 via-green-100/30 to-teal-100/30"></div>
-
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-8 left-8 w-2 h-2 bg-emerald-400 rounded-full animate-bounce opacity-60"></div>
               <div
@@ -410,7 +381,6 @@ export default function VerificationStep({
                 style={{ animationDelay: "1.5s" }}
               ></div>
             </div>
-
             <div className="relative z-10">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-emerald-100 to-green-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-xl">
                 <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center shadow-inner">
@@ -420,7 +390,6 @@ export default function VerificationStep({
                   <Award className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                 </div>
               </div>
-
               <h2 className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-emerald-800 via-green-700 to-teal-800 bg-clip-text text-transparent mb-2 sm:mb-4 tracking-tight">
                 Booking Confirmed!
               </h2>
@@ -431,7 +400,6 @@ export default function VerificationStep({
                   {userDetails.email}
                 </span>
               </p>
-
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6 max-w-4xl mx-auto">
                 <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-emerald-200 shadow-md hover:shadow-lg transition-all duration-300 group">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-md flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-md group-hover:scale-110 transition-transform duration-300">
@@ -444,7 +412,6 @@ export default function VerificationStep({
                     {bookingId}
                   </div>
                 </div>
-
                 {selectedSlot && (
                   <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-emerald-200 shadow-md hover:shadow-lg transition-all duration-300 group">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-pink-400 to-indigo-500 rounded-md flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-md group-hover:scale-110 transition-transform duration-300">
@@ -461,7 +428,6 @@ export default function VerificationStep({
                     </div>
                   </div>
                 )}
-
                 <div className="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-emerald-200 shadow-md hover:shadow-lg transition-all duration-300 group">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-md flex items-center justify-center mx-auto mb-2 sm:mb-3 shadow-md group-hover:scale-110 transition-transform duration-300">
                     <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
@@ -480,18 +446,15 @@ export default function VerificationStep({
             </div>
           </Card>
         )}
-
         {verificationStatus === "failed" && (
           <Card className="bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 border border-red-200 rounded-xl p-6 sm:p-8 shadow-xl text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-red-100/30 via-pink-100/30 to-rose-100/30"></div>
-
             <div className="relative z-10">
               <div className="relative w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-xl">
                 <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center shadow-inner">
                   <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-red-600" />
                 </div>
               </div>
-
               <h2 className="text-xl sm:text-3xl font-black text-red-900 mb-2 sm:mb-4 tracking-tight">
                 Verification Failed
               </h2>
@@ -499,7 +462,6 @@ export default function VerificationStep({
                 {qrError ||
                   "We encountered an issue verifying your payment slip. Please ensure the QR code is clearly visible and the payment details are correct."}
               </p>
-
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 max-w-md mx-auto">
                 <Button
                   className="flex-1 bg-white border-2 border-red-300 text-red-700 hover:bg-red-50 py-3 sm:py-4 rounded-xl font-bold transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg text-sm sm:text-base"
@@ -517,10 +479,18 @@ export default function VerificationStep({
                   Get Help
                 </Button>
               </div>
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={handleDemoSuccess}
+                  className="bg-gradient-to-r from-pink-700 to-pink-600 hover:from-emerald-600 hover:to-green-700 text-white py-3 sm:py-4 px-6 rounded-xl font-black shadow-lg hover:shadow-xl transition-all duration-300 flex items-center"
+                >
+                  <Award className="w-5 h-5 sm:w-6 sm:h-6 mr-1 sm:mr-2" />
+                  Demo as Payment Success
+                </Button>
+              </div>
             </div>
           </Card>
         )}
-
         {verificationStatus !== "verified" && verificationStatus !== null && (
           <div className="flex justify-center pt-4 sm:pt-6">
             <Button

@@ -42,7 +42,7 @@ Your appointment has been confirmed!
 ⏰ Time: ${timeSlot.time}
 💵 Amount Paid: ${amount} THB
 
-Thank you for booking with us.
+Thank you for choosing our clinic. 
 
 Regards,
 M-Care Team.

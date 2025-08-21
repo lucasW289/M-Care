@@ -10,6 +10,7 @@ import { connectDB } from "./config/mongo";
 import servicesRouter from "./api/services";
 import appointmentsRoute from "./api/appointments";
 import appointmentAvailabilityRoutes from "./api/availability";
+import demoRouter from "./api/demo"; // The new demo router
 
 // Import workers so they start automatically
 import "./services/verificationWorker";
@@ -37,6 +38,8 @@ app.use("/verify-slip", verificationRouter);
 app.use("/services", servicesRouter);
 app.use("/appointments", appointmentsRoute);
 app.use("/availability", appointmentAvailabilityRoutes);
+app.use("/demo", demoRouter); // Add the new demo router
+
 // app.use("/send-confirmation-email", sendConfirmationEmailRoute); // optional
 
 // Connect to MongoDB, then start server
